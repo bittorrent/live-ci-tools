@@ -50,21 +50,14 @@ if args.with_aws:
 if args.with_travis or args.with_travis_all:
     flags.extend([
         # from https://docs.travis-ci.com/user/environment-variables
-        # The following default environment variables are available to all builds.
+        # The following default environment variables are available to all
+        # builds. Most are not included by default because they likely break
+        # docker environments. Observe --with-travis-all to determine these.
         'CI',
         'TRAVIS',
         'CONTINUOUS_INTEGRATION',
         'DEBIAN_FRONTEND',
         'HAS_JOSH_K_SEAL_OF_APPROVAL',
-        'USER',
-        'HOME',
-        'LANG',
-        # 'LC_ALL',  # included in --with-travis-all (see below)
-        'RAILS_ENV',
-        'RACK_ENV',
-        'MERB_ENV',
-        'JRUBY_OPTS',
-        'JAVA_HOME',
         # Additionally, Travis CI sets environment variables you can use in your
         # build, e.g. to tag the build, or to run post-build deployments.
         'TRAVIS_BRANCH',
@@ -112,9 +105,23 @@ if args.with_travis or args.with_travis_all:
         'TRAVIS_XCODE_WORKSPACE',
     ])
     if args.with_travis_all:
-        # usually disabled because many docker containers don't support other
-        # locales to produce more minimal images
-        flags.append('LC_ALL')
+        flags.extend([
+            # usually disabled because many docker containers don't support
+            # other locales to produce more minimal images
+            'LC_ALL',
+            # disabled because they will almost surely break anything relying on
+            # it inside a docker environment
+            'USER',
+            'HOME',
+            'LANG',
+            # when using docker environments, the image will probably have a
+            # self-contained installation.
+            'RAILS_ENV',
+            'RACK_ENV',
+            'MERB_ENV',
+            'JRUBY_OPTS',
+            'JAVA_HOME',
+        ])
 
 docker_flags = ' -e ' + ' -e '.join(flags)
 
