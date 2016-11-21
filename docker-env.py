@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import argparse
 import subprocess
+import os
 
 parser = argparse.ArgumentParser(description='Emit docker flags for exposing environments')
 parser.add_argument('--without-live',
@@ -12,6 +13,7 @@ parser.add_argument('--without-live',
                     help='include the live environment')
 parser.add_argument('--with-travis',
                     action='store_true',
+                    default=(os.environ.get('TRAVIS') == os.environ.get('CI') == 'true'),
                     help='include the travis-ci environment')
 parser.add_argument('--with-codecov',
                     action='store_true',
