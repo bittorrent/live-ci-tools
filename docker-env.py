@@ -14,7 +14,10 @@ parser.add_argument('--without-live',
 parser.add_argument('--with-travis',
                     action='store_true',
                     default=(os.environ.get('TRAVIS') == os.environ.get('CI') == 'true'),
-                    help='include the travis-ci environment')
+                    help='include most of the travis-ci environment')
+parser.add_argument('--with-travis-all',
+                    action='store_true',
+                    help='include all of the travis-ci environment and probably incompatible with many base images')
 parser.add_argument('--with-codecov',
                     action='store_true',
                     help='include the codecov environment')
@@ -44,7 +47,7 @@ if args.with_aws:
         'AWS_SECRET_ACCESS_KEY',
     ])
 
-if args.with_travis:
+if args.with_travis or args.with_travis_all:
     flags.extend([
         # from https://docs.travis-ci.com/user/environment-variables
         # The following default environment variables are available to all builds.
@@ -56,7 +59,7 @@ if args.with_travis:
         'USER',
         'HOME',
         'LANG',
-        'LC_ALL',
+        # 'LC_ALL',  # included in --with-travis-all (see below)
         'RAILS_ENV',
         'RACK_ENV',
         'MERB_ENV',
@@ -108,6 +111,10 @@ if args.with_travis:
         'TRAVIS_XCODE_PROJECT',
         'TRAVIS_XCODE_WORKSPACE',
     ])
+    if args.with_travis_all:
+        # usually disabled because many docker containers don't support other
+        # locales to produce more minimal images
+        flags.append('LC_ALL')
 
 docker_flags = ' -e ' + ' -e '.join(flags)
 
