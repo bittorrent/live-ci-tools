@@ -31,7 +31,11 @@ parser.add_argument('library',
                     help='library to prepare')
 args = parser.parse_args()
 
-subprocess.check_call([args.needy, 'init'] + shlex.split(args.needy_args) + args.library)
+subprocess.check_call(
+    [args.needy, 'init'] +
+    (shlex.split(args.needy_args) if args.needy_args else []) +
+    args.library
+)
 
 for lib in args.library:
     subprocess.check_call([args.needy, 'dev', 'enable', lib])
