@@ -26,10 +26,6 @@ args = parser.parse_args()
 
 
 def destination_path():
-    if 'TRAVIS_BRANCH' not in os.environ:
-        print('TRAVIS_BRANCH not defined')
-        sys.exit(1)
-
     if 'TRAVIS_REPO_SLUG' not in os.environ:
         print('TRAVIS_REPO_SLUG not defined')
         sys.exit(1)
